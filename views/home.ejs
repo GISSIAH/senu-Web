@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="/style.css" rel="stylesheet" />  
+        <script src="https://libs.cartocdn.com/carto-vl/v1.4.4/carto-vl.min.js"></script>
+
+        <!-- Include Mapbox GL from the Mapbox CDN-->
+        <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js"></script>
+        <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.js"></script>
+
+
+
+        "
+</head>
+
+        
+    </head>
+    <body>
+        <div id="hour">
+            <input type="range" min="1" max="20">
+        </div>
+        <div>
+            <h1>THE MAP</h1>
+            <div id="map"></div>
+        <script>
+            const map = new mapboxgl.Map({
+            container:'map',
+       style:carto.basemaps.voyager,
+       zoom:8,
+       center:[35.55,-14.55]
+    });
+    axios({
+      url: 'http://localhost:4000/api/local/recent',
+      method: 'get'
+    }).then(respo=>{
+      console.log(respo.data)
+      var viz = new carto.Viz(`
+        @name: $name,
+        @type: $type,
+        @admitted: $admitted,
+        @doctors: $doctors,
+        @nurses: $nurses,
+        @time:$time
+
+      `)
+      const Source = new carto.source.GeoJSON(respo.data);
+      const Layer = new carto.Layer('hosps', Source,viz );
+      Layer.addTo(map);
+    
+    const interactivity = new carto.Interactivity(Layer);
+    interactivity.on('featureClick', featureEvent => {
+        featureEvent.features.forEach((feature) => {
+            console.log(feature.variables)
+        const coords = featureEvent.coordinates;
+        const html = `
+                    <h1>name:${feature.variables.name.value}</h1>
+                    <p>type:${feature.variables.type.value}</p>
+                    <p>"admitted:${feature.variables.admitted.value}</p>
+                    <p>doctors:${feature.variables.doctors.value}</p>
+                    <p>nurses:${feature.variables.nurses.value}</p>
+                    <p>time:${feature.variables.time.value}</p>
+`;
+                new mapboxgl.Popup()
+    .setLngLat([coords.lng, coords.lat])
+    .setHTML(html)
+    .addTo(map);
+    
+        });   
+});
+})
+
+
+
+
+    let i = document.querySelector('input')
+    i.addEventListener('input', function () {
+        axios({
+      url: 'http://localhost:4000/api/all',
+      method: 'get'
+    }).then(respo=>{
+        console.log(respo.data)
+    });
+    }, false);
+
+
+        </script>
+        </div>
+
+        
+
+        
+    </body>
+</html>
