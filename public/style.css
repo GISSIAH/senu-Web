@@ -1,0 +1,24 @@
+#map {
+    position: absolute;
+    height: 50%;
+    width: 100%;
+}
+#slidecontainer{
+    width: 100%;
+}
+#hour{
+    position: absolute  
+}
+input {
+    display: block;
+    width: 200px;
+    margin: auto;
+    position: absolute;
+  }
+  
+  output {
+    text-align: center;
+    display: block;
+    padding-top: 15px;
+    position: absolute;
+  }
