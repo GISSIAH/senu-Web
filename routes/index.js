@@ -16,7 +16,7 @@ router.get('/entry',(req,res)=>{
 });
 
 router.post('/entry',urlenco,(req,res)=>{
-    axios.post('http://localhost:4000/api/',req.body).then(data=>{
+    axios.post('https://senu-back.herokuapp.com/',req.body).then(data=>{
         console.log(data)
     }).catch(err=>{
         console.log(err)
