@@ -31,7 +31,7 @@
                                             center:[35.55,-14.55]
                                     });
         axios({
-                url: 'http://localhost:4000/api/local/recent',
+                url: 'https://senu-back.herokuapp.com/local/recent',
                 method: 'get'
     }).then(respo=>{
       console.log(respo.data)
