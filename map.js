@@ -1,10 +1,6 @@
 const mapboxgl = require('mapbox-gl');
 const carto = require('@carto/carto-vl');
-const axios = require('axios')
-
-
-    
-    
+const axios = require('axios') 
 const map = new mapboxgl.Map({
     container:'map',
     style:carto.basemaps.voyager,
