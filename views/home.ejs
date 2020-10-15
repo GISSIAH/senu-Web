@@ -16,6 +16,13 @@
             <h1>THE MAP</h1>
             <div id="map"></div>
         <script>
+            var dt= getUserAccount().then((result)=>{
+                return result
+            })
+            async function getUserAccount() {
+                return axios.get('https://senu-back.herokuapp.com/local/recent');
+            }
+            console.log(dt)
             const map = new mapboxgl.Map({
                                             container:'map',
                                             style:carto.basemaps.voyager,
