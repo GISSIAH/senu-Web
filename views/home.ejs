@@ -22,7 +22,7 @@
                                             zoom:8,
                                             center:[35.55,-14.55]
                                     });
-            var dt= getData().then((result)=>{
+            var dt=await getData().then((result)=>{
                 return result
             })
             async function getData() {
