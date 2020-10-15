@@ -23,8 +23,8 @@
                                             center:[35.55,-14.55]
                                     });
             var dt= ()=>{
-                await getData().then(data=>{
-                console.log(data)
+                getData().then(data=>{
+                return data;
             })
             async function getData() {
                 var rq= await axios.get('https://senu-back.herokuapp.com/local/recent');
