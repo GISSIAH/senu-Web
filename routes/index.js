@@ -6,6 +6,10 @@ router.get('/vis',(req,res)=>{
     console.log('home');
     res.render('home')
 });
+router.get('/test',(req,res)=>{
+    console.log('test');
+    res.render('test')
+});
 router.get('/entry',(req,res)=>{
     console.log('entry')
     res.render('entry')
