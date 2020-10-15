@@ -22,8 +22,45 @@
                                             zoom:8,
                                             center:[35.55,-14.55]
                                     });
-            var url='https://senu-back.herokuapp.com/local/recent';
-            axios({
+            var dt= getData().then((result)=>{
+                return result
+            })
+            async function getData() {
+                return axios.get('https://senu-back.herokuapp.com/local/recent');
+            }
+            console.log(dt)
+            var viz = new carto.Viz(`
+                        @name: $name,
+                        @type: $type,
+                        @admitted: $admitted,
+                        @doctors: $doctors,
+                        @nurses: $nurses,
+                        @time:$time
+        `)
+            const Source = new carto.source.GeoJSON(dt.data);
+            const Layer = new carto.Layer('hosps', Source,viz );
+            Layer.addTo(map);
+            const interactivity = new carto.Interactivity(Layer);
+            interactivity.on('featureClick', featureEvent => {
+                featureEvent.features.forEach((feature) => {
+                console.log(feature.variables)
+                const coords = featureEvent.coordinates;
+                const html = `
+                            <h1>name:${feature.variables.name.value}</h1>
+                            <p>type:${feature.variables.type.value}</p>
+                            <p>"admitted:${feature.variables.admitted.value}</p>
+                            <p>doctors:${feature.variables.doctors.value}</p>
+                            <p>nurses:${feature.variables.nurses.value}</p>
+                            <p>time:${feature.variables.time.value}</p>
+        `;
+                        new mapboxgl.Popup()
+            .setLngLat([coords.lng, coords.lat])
+            .setHTML(html)
+            .addTo(map);
+        });   
+    });
+
+            /*axios({
                     url: url,
                     method: 'get'
             }).then(respo=>{
@@ -60,6 +97,7 @@
 });
 }
     , false);
+    */
         </script>
         </div>
     </body>
