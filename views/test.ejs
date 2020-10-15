@@ -22,8 +22,15 @@
                                             zoom:8,
                                             center:[35.55,-14.55]
                                     });
-            var url='https://senu-back.herokuapp.com/local/recent';
-            axios({
+            var url='https://senu-back.herokuapp.com/local/group/?d='+10+'&m='+10;
+            var dt= getUserAccount().then((result)=>{
+                return result
+            })
+            async function getUserAccount() {
+                return axios.get('https://senu-back.herokuapp.com/local/recent');
+            }
+            console.log(dt)
+            /*axios({
                     url: url,
                     method: 'get'
             }).then(respo=>{
@@ -59,7 +66,7 @@
         });   
 });
 }
-    , false);
+    , false) ;*/
         </script>
         </div>
     </body>
