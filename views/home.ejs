@@ -22,11 +22,10 @@
                                             zoom:8,
                                             center:[35.55,-14.55]
                                     });
-            var dt= getData().then((result)=>{
-                return result.data;
-            })
+            var dt= getData();
             async function getData() {
-                return axios.get('https://senu-back.herokuapp.com/local/recent');
+                var rq= await axios.get('https://senu-back.herokuapp.com/local/recent');
+                return rq.data;
             }
             console.log(dt)
             var viz = new carto.Viz(`
