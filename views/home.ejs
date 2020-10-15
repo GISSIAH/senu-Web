@@ -22,8 +22,8 @@
                                             zoom:8,
                                             center:[35.55,-14.55]
                                     });
-            var dt=await getData().then((result)=>{
-                return result
+            var dt= getData().then((result)=>{
+                return result.data;
             })
             async function getData() {
                 return axios.get('https://senu-back.herokuapp.com/local/recent');
@@ -37,7 +37,7 @@
                         @nurses: $nurses,
                         @time:$time
         `)
-            const Source = new carto.source.GeoJSON(dt.data);
+            const Source = new carto.source.GeoJSON(dt);
             const Layer = new carto.Layer('hosps', Source,viz );
             Layer.addTo(map);
             const interactivity = new carto.Interactivity(Layer);
