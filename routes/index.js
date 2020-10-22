@@ -15,7 +15,14 @@ router.get('/entry',(req,res)=>{
     res.render('entry')
 });
 router.post('/entry',urlenco,(req,res)=>{
-    axios.post('https://senu-back.herokuapp.com/',req.body).then(data=>{
+    var new_body={'name':req.body.name,
+        'type':req.body.type,
+        'admitted':req.body.admitted,
+        'doctors':req.body.doctors,
+        'nurses':req.body.nurses,
+        'time':Date()}
+
+    axios.post('https://senu-back.herokuapp.com/',new_body).then(data=>{
         console.log(data)
     }).catch(err=>{
         console.log(err)
