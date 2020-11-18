@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SENU</title>
+    <!-- Openlayers -->
+    <link rel="stylesheet" href="https://openlayers.org/en/latest/css/ol.css" />
+    <script type="text/javascript" src="https://openlayers.org/en/latest/build/ol.js"></script>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL,Object.assign"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.2.0/d3.js"></script>
+    
+    <!-- ol-ext -->
+    <link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" />
+    <script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script>
+    <style>
+        .map {
+          height: 400px;
+          width: 100%;
+        }
+        .overlay-container{
+          background-color:blueviolet;
+          width: 150px;
+          color: white;
+          text-align: center;
+          border-radius: 1px;
+          padding: 2px 0;
+          position: absolute;
+          z-index: 1;
+          bottom: 100%;
+        }
+        .line {
+   fill: none;
+   stroke: green;
+   stroke-width: 5px;
+}
+      </style>
+</head>
+
+<body >
+    <div>
+        <div id="hour">
+            <input type="range" min="0" max="23">
+            <output></output>
+        </div>
+    </div>
+    <div id="update">
+      <p>Lastly updated on:<%=time%></p>
+
+    </div>
+  
+    <div id="map" style="width:100%; height:500px"></div>
+
+    <div id="graph">
+
+    </div>
+    <div id="categorizer"></div>
+    <div class="overlay-container">
+        <span class='overlay-text' id="feature-name"></span><br>
+        <span class='overlay-text' id="feature-more"></span><br>
+      </div>
+    <script type="text/javascript">
+    // Layers
+    var layers = [
+        new ol.layer.Tile({
+            source: new ol.source.OSM()
+        })
+    ]
+    // The map
+    var map = new ol.Map
+        ({  target: 'map',
+            view: new ol.View
+            ({  zoom: 11,
+                center: [35.077885,-15.770264],
+                projection:'EPSG:4326'
+            }),
+            layers: layers
+        });
+      
+      var url = 'https://senu-back.herokuapp.com/recent'
+      var vsource = new ol.source.Vector({
+            url:url,
+            format: new ol.format.GeoJSON()
+          })
+      var hos = new ol.layer.VectorImage({
+          source:vsource,
+          visible:true,
+          title:'HOSPITALS'
+          
+      });
+      console.log(hos)
+      map.addLayer(hos);
+      
+      
+      var select = new ol.interaction.Select({})
+      map.addInteraction(select)
+
+    var search = new ol.control.SearchFeature(
+        {   
+            source: vsource,
+            property:'name'
+        });
+    map.addControl(search);
+
+    // Select feature when click on the reference index
+    search.on('select', function(e)
+        {   select.getFeatures().clear();
+            select.getFeatures().push (e.search);
+            var p = e.search.getGeometry().getFirstCoordinate();
+            map.getView().animate({ center:p });
+        });
+        var popup = new ol.Overlay.PopupFeature({
+    popupClass: 'default anim',
+    select: select,
+    canFix: true,
+    template: {
+        title: 
+          // 'nom',   // only display the name
+          function(f) {
+            return f.get('name');
+          },
+        attributes: // [ 'region', 'arrond', 'cantons', 'communes', 'pop' ]
+        {
+          'type': { title: 'Type' },
+          'admitted': { title: 'Admitted' },
+          'doctors': { title: 'Doctors' },
+          'nurses': { title: 'Nurses' },
+          'time':{title:'Time'}
+        }
+    }
+  });
+  
+  map.addOverlay (popup);
+
+  let i = document.querySelector('input'),
+  o = document.querySelector('output');
+  o.innerHTML = i.value;
+//
+  i.addEventListener('input', function () {
+  map.removeLayer(hos)
+  o.innerHTML = i.value;
+  const d=decide(new Date().getDay())
+  const h = decide(i.value)
+  const m= new Date().getMonth()
+  const url = `https://senu-back.herokuapp.com/local/specific/?d=16&h=${h}&m=11`
+  var vsource = new ol.source.Vector({
+        url:url,
+        format: new ol.format.GeoJSON()
+      })
+  var new_hos = new ol.layer.VectorImage({
+      source:vsource,
+      visible:true,
+      title:'HOSPITALS'
+  });
+  console.log(new_hos)
+  map.addLayer(new_hos);
+      
+
+  }, false);
+  function decide(hour){
+    if (hour<10){
+      return '0'+hour;
+    }else{
+      return hour
+    }
+  }
+    </script>
+    
+</body>
+</html>
