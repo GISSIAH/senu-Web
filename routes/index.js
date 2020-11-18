@@ -8,7 +8,7 @@ router.get('/',(req,res)=>{
 })
 router.get('/vis',(req,res)=>{
     console.log('home');
-    res.render('home')
+    res.render('vis')
 });
 router.get('/test',(req,res)=>{
     console.log('test');
