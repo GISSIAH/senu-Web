@@ -4,11 +4,14 @@ const bodyparser = require('body-parser')
 const urlenco = bodyparser.urlencoded({extended:true})
 
 router.get('/',(req,res)=>{
-    res.render('vis')
+    res.send('HOME PLACE')
 })
 router.get('/vis',(req,res)=>{
-    console.log('home');
-    res.render('vis')
+    axios.get('https://senu-back.herokuapp.com/uptime').then(function(data){
+    res.render('vis',{time:data.data.Latest})
+    }).catch(err=>{
+        console.log(err)
+    })
 });
 router.get('/test',(req,res)=>{
     console.log('test');
