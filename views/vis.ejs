@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="https://openlayers.org/en/latest/css/ol.css" />
     <script type="text/javascript" src="https://openlayers.org/en/latest/build/ol.js"></script>
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL,Object.assign"></script>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.2.0/d3.js"></script>
     
     <!-- ol-ext -->
@@ -50,8 +51,9 @@
   
     <div id="map" style="width:100%; height:500px"></div>
 
-    <div id="graph">
-
+    <div id="g" style= "width:700px; height:300px" >
+      <canvas id="myChart" ></canvas>
+    
     </div>
     <div id="categorizer"></div>
     <div class="overlay-container">
@@ -130,6 +132,70 @@
   });
   
   map.addOverlay (popup);
+  map.on('click',(e)=>{
+    map.forEachFeatureAtPixel(e.pixel,(feature,layer)=>{
+
+      const name=feature.get('name');
+      const d = new Date().getDate()
+      const m = new Date().getMonth() + 1
+      const y = new Date().getFullYear()
+
+      const graphlink = `https:senu-back.herokuapp.com/daily/?d=${d}&m=${m}&y=${y}&id=${name}`
+            axios({
+                    url: graphlink,
+                    method: 'get'
+            }).then(res=>{
+      var lbs = []
+      var dt = []
+      res.data.features.forEach(element=>{
+      lbs.push(element.hour)
+    dt.push(element.admitted)
+  })
+  var ctx = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: lbs,
+        datasets: [{
+            label: 'Admitted',
+            data: dt,
+            barThickness: 15,
+            maxBarThickness: 18,
+            minBarLength: 0.4,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+            })
+
+
+    })
+  })
 
   let i = document.querySelector('input'),
   o = document.querySelector('output');
