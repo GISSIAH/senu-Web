@@ -140,7 +140,8 @@
       const m = new Date().getMonth() + 1
       const y = new Date().getFullYear()
 
-      const graphlink = `https:senu-back.herokuapp.com/daily/?d=${d}&m=${m}&y=${y}&id=${name}`
+      const graphlink = `https://senu-back.herokuapp.com/daily/?d=${d}&m=${m}&y=${y}&id=${name}`
+      console.log(graphlink)
             axios({
                     url: graphlink,
                     method: 'get'
